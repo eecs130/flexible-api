@@ -1,6 +1,6 @@
 var app = angular.module("modelsApp", ['ngRoute']);
 app.adminMode = true;
-app.url = "http://localhost:5000/artists/";
+app.url = "https://guarded-atoll-17283.herokuapp.com/artists/";
 app.config(function ($routeProvider) {
     'use strict';
     $routeProvider
