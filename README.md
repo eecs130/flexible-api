@@ -34,18 +34,14 @@ want your data to be treated as an image or as an audio file:
 * heroku config:set AWS_S3_BUCKET=XXXXXXXX
 * heroku config:set BLITLINE_API_KEY=XXXXX
 
-## Todos
-* Images Endpoint
-* Audio Endpoint
-* Comments Endpoint
-* Contacts Endpoint: done
-* YouTube Endpoint: done
-* Other endpoints for the class brainstorm:
-  * character / world DB
-  * landmarks
-  * game reviews
-  * street art
-  * geo
-  * lyrics
-  * library of resources
-  * surf reviews // discussion board
+# ImageMagick
+The thumbnailer requires imagemagick
+## Mac
+```bash 
+$ brew install imagemagick
+```
+
+## Linux
+```bash 
+$ sudo apt-get install imagemagick
+```

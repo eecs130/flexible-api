@@ -17,6 +17,9 @@ module.exports = app;
 app.use(allowCrossDomain);
 app.use('/samples', express.static(__dirname + "/samples"));
 app.use('/samples', serveIndex(__dirname + "/samples"));
+
+app.use('/samples-angular', express.static(__dirname + "/samples_angular"));
+app.use('/samples-angular', serveIndex(__dirname + "/samples_angular"));
 app.use(bodyParser.json());
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in your app.
@@ -51,19 +54,19 @@ app.all('*', function (request, response, next) {
     request.db = db;
     request.handleError = function (res, reason, message, code) {
         console.log("ERROR: " + reason);
-        res.status(code || 500).json({"error": message});
+        return res.status(code || 500).json({"error": message}).end();
     };
     next();
 });
 
 //Videos:
-var detailPaths = ['/videos/:id([0-9a-fA-F]+)/', '/:username/videos/:id([0-9a-fA-F]+)/'],
-    listPaths = ['/videos/', '/:username/videos/'];
-app.get(detailPaths, videos.get);
-app.get(listPaths, videos.list);
-app.post(listPaths, videos.post);
-app.put(detailPaths, videos.put);
-app.delete(detailPaths, videos.delete);
+// var detailPaths = ['/videos/:id([0-9a-fA-F]+)/', '/:username/videos/:id([0-9a-fA-F]+)/'],
+//     listPaths = ['/videos/', '/:username/videos/'];
+// app.get(detailPaths, videos.get);
+// app.get(listPaths, videos.list);
+// app.post(listPaths, videos.post);
+// app.put(detailPaths, videos.put);
+// app.delete(detailPaths, videos.delete);
 
 // Contacts
 //detailPaths = ['/contacts/:id([0-9a-fA-F]+)/', '/:username/contacts/:id([0-9a-fA-F]+)/'];
@@ -78,14 +81,14 @@ app.delete(detailPaths, videos.delete);
 // Generic, user-defined tables w/S3 & thumbnailing support:
 var multipart = require('connect-multiparty'),
     multipartMiddleware = multipart();
-detailPaths = ['/:username/:collection/:id([0-9a-fA-F]+)/'];
-listPaths = ['/:username/:collection/'];
+detailPaths = ['/:collection/:id([0-9a-fA-F]+)/'];
+listPaths = ['/:collection/'];
 app.get(listPaths, multipartMiddleware, generic.list);
 app.get(detailPaths, multipartMiddleware, generic.get);
 app.post(listPaths, multipartMiddleware, generic.post);
 app.put(detailPaths, multipartMiddleware, generic.put);
 app.delete(detailPaths, generic.delete);
-app.get('/:username/:collection/delete-all', generic.deleteAll);
+app.get('/:collection/delete-all', generic.deleteAll);
 
 
 

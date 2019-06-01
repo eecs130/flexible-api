@@ -25,7 +25,7 @@ var S3_BUCKET = process.env.AWS_S3_BUCKET,
     flow = require('flow'),
     getCollection = function (params) {
         'use strict';
-        return params.username + "_" + params.collection;
+        return params.collection;
     };
 
 exports.list = function (req, res) {
@@ -49,18 +49,18 @@ exports.list = function (req, res) {
 exports.post = function (req, res) {
     'use strict';
     var COLLECTION = getCollection(req.params),
-        requiredFields = ['username'],
+        //requiredFields = ['username'],
         isValid,
         newImage = req.body;
     // ensure if someone accidentally posts an _id, that it doesn't
     // interfere w/MongoDB's indexing system. Delete _id from dictionary:
     delete req.body._id;
-    req.body.username = req.body.username || req.params.username;
+    //req.body.username = req.body.username || req.params.username;
 
-    isValid = helpers.validateCreateUpdate(requiredFields, req, res);
-    if (!isValid) {
-        return;
-    }
+    // isValid = helpers.validateCreateUpdate(requiredFields, req, res);
+    // if (!isValid) {
+    //     return;
+    // }
     flow.exec(
         // generate thumbnails and transfer to S3:
         function () {
