@@ -28,4 +28,5 @@ const issueGetRequest = () => {
         });
 };
 
+
 document.querySelector('button').onclick = issueGetRequest;

@@ -1,0 +1,58 @@
+nav {
+    display: grid;
+    grid-template-areas: "input btn";
+    grid-column: 60% 40%;
+    /* background: #222;
+    position: fixed;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    color: white;
+    z-index: 101;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.37);
+    box-shadow: 0 27px 55px 0 rgba(0, 0, 0, 0.3),
+      0 17px 17px 0 rgba(0, 0, 0, 0.15);
+    padding: 10px; */
+    justify-content: flex-start;
+    align-content: space-around;
+}
+
+nav button {
+    grid-area: btn;
+    padding: 3px 10px;
+    min-width: 50px;
+    margin-right: 10px;
+    background: white;
+    border-width: 1px;
+    border-radius: .25rem;
+    margin-left: 1rem;
+}
+
+nav input, nav select {
+    grid-area: input;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    border-bottom: 2px solid rgb(27, 150, 199);
+    font-size: 1.3em;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    display: inline-block;
+    width: 20vw;
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem 1.75rem .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    vertical-align: middle;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+}
+
+nav select {
+    background:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right .75rem center/8px 10px;
+    background-color: white;
+}

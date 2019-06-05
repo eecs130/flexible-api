@@ -26,25 +26,61 @@ const addDBToRequest = (request, response, next) => {
 };
 
 const showListOfCollections = (mainreq, mainres) => {
-    // get all collections in the database and list them:
-    mainreq.db.listCollections().toArray((err, collInfos) => {
-        if (err) {
-            mainres.status(400).render('index', { 
-                error: err
-            });
-        } else {
+    mainreq.db.listCollections().toArray()
+        .then(collInfos => {
             const endpoints = collInfos.map(item => { 
-                return {
-                    'name': item.name 
-                }
+                return { 'name': item.name };
             });
+            endpoints.unshift({ 'name': 'endpoints' })
+            return endpoints;
+        })
+        .then(endpoints => {
             mainres.render('index', { 
                 endpoints: endpoints,
                 baseURL: '//' + mainreq.get('host')
             });
-        }
-    });
+        });
 };
+
+const getAllEndpoints = (mainreq, mainres) => {
+    const endpointsFinal = {};
+    mainreq.db.listCollections().toArray()
+        .then(collInfos => {
+            baseURL = '//' + mainreq.get('host')
+            return collInfos.map(item => { 
+                return { 
+                    'name': item.name, 
+                    'url':  baseURL + '/' + item.name + '/'};
+            });
+        })
+        .then(endpoints => {
+            // This function iterates through each DB collection to generate
+            // a list of endpoints...
+            baseURL = '//' + mainreq.get('host');
+            for (let i = 0, p = Promise.resolve(); i < endpoints.length; i++) {
+                p = p.then(_ => new Promise(resolve => {
+                    //endpointsFinal.push(endpoints[i]['url']);
+                    const ids = [];
+                    mainreq.db.collection(endpoints[i]['name']).find().toArray(function(err, items) {
+                        if (err) throw err;
+                        for (item of items) {
+                            // let url = baseURL + '/' + endpoints[i]['name'] + '/' + item['_id'] + '/';
+                            // endpointsFinal.push(url);
+                            ids.push(item['_id']);
+                        }
+                        endpointsFinal[endpoints[i]['name']] = ids;
+                        // if it's the last endpoint, render the response
+                        // (needs to happen within a promise):
+                        if (i === endpoints.length - 1) {
+                            mainres.status(200).json(endpointsFinal);
+                        }
+                        resolve();
+                    })
+                }));
+            }
+        });
+};
+
 
 const initDatabaseAndStartServer = () => {
     const dbConnection = process.env.MONGODB_URI || LOCAL_MONGODB
@@ -72,13 +108,14 @@ module.exports = app;
 
 // Allow Cors
 app.use(allowCrossDomain);
+app.use(bodyParser.json());
 
 // Configure Handlebars: 
 app.engine('handlebars', handlebars({
     extname: '.handlebars',
     defaultLayout: 'index',
     layoutsDir: 'views'
-  }));
+}));
 app.set('view engine', 'handlebars');
 
 // Middleware:
@@ -91,11 +128,14 @@ app.use('/samples', serveIndex(__dirname + "/samples"));
 
 app.use('/samples-angular', express.static(__dirname + "/samples_angular"));
 app.use('/samples-angular', serveIndex(__dirname + "/samples_angular"));
-app.use(bodyParser.json());
+
+app.use('/tester', express.static(__dirname + "/tester"));
+app.use('/tester', serveIndex(__dirname + "/tester"));
 
 
 // Dynamic Routes:
 app.get('/', showListOfCollections);
+app.get('/endpoints/', getAllEndpoints);
 
 // Generic, user-defined tables w/S3 & thumbnailing support:
 var multipart = require('connect-multiparty'),

@@ -136,18 +136,13 @@ exports.get = function (req, res) {
 exports.put = function (req, res) {
     'use strict';
     var COLLECTION = getCollection(req.params),
-        updateDoc = req.body,
-        d;
+        updateDoc = req.body;
+    const _id = updateDoc._id;
     delete updateDoc._id;
-
-    req.db.collection(COLLECTION).updateOne({_id: new ObjectID(req.params.id)}, updateDoc, function (err, doc) {
-        if (err) {
-            req.handleError(res, err.message, "Failed to update resource");
-        } else {
-            console.log("UPDATED DOC:", d);
-            d = doc;
-            res.status(204).json(d);
-        }
+    req.db.collection(COLLECTION).updateOne({_id: new ObjectID(req.params.id)}, updateDoc
+    ).then(data => {
+        updateDoc._id = _id;
+        res.status(200).json(updateDoc);
     });
 };
 
