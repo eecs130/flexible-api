@@ -22,19 +22,19 @@ AWS_S3_BUCKET={{YOUR_AWS_S3_BUCKET}}
 ```
 Only the MONGODB_URI is required. The AWS variables are only required if you wish to store images remotely.
 
-## S3 File setup instructions [OPTIONAL]
+## S3 File setup instructions (Optional)
 Note that support for images and audio files (e.g. blobs) requires that you set
 up an Amazon S3 Bucket. See S3 instructions for more details. If you do not need to upload images and audio, you can skip this step.
 
-# ImageMagick
+## ImageMagick
 The thumbnailer requires imagemagick, which means that you will need to install imagemagick on the server that is hosting your application. Here are installation instructions on Mac and on Linux.
 
-## Mac
+### Mac
 ```bash 
 $ brew install imagemagick
 ```
 
-## Linux
+### Linux
 ```bash 
 $ sudo apt-get install imagemagick
 ```
