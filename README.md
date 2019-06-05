@@ -16,6 +16,10 @@ want your data to be treated as an image or as an audio file:
 * Audio: any key that is prefaced with an **audio_** string will be treated as an audio file.
 
 # Setup Instructions
+## Deploying to Heroku
+1. Set up an empty MongoDB using the **mLab MongoDB** Add-on (use Free "Sandbox" version).
+2. Create an environment variable called MONGODB_URI that points to your newly created database.
+
 ## Environment variables
 In order for the app to work, you need to configure the following environment variables:
 ```bash
