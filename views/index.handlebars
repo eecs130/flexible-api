@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexible API</title>
+    <link rel="icon" href="/static/images/favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700|Roboto" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/color-brewer.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+
+</head>
+<body>
+    <header>
+        <h1>
+            <img src="/static/images/internet-white.png" />
+            Flexible API
+        </h1>
+    </header>
+    {{#if error}}
+    <main>
+        {{{error}}}
+    </main>
+    {{else}}
+    <main>
+        {{#if endpoints}}
+        <nav>
+            <h3>Endpoints</h3>
+            {{#each endpoints}}
+                <a href="{{this.name}}">{{this.name}}</a>
+            {{/each}}
+
+        </nav>
+        {{/if}}
+        <section class="api-area">
+            <h1>Current API Endpoints</h1>
+            <p>To create a new API endpoint, just post to one and it will be created.</p> 
+            {{#if endpoints}}
+            <ul>
+                {{#each endpoints}}
+                <li>
+                    <a href="{{../baseURL}}/{{this.name}}">{{../baseURL}}/{{this.name}}</a>
+                </li>
+                {{/each}}
+            </ul>
+            {{/if}}
+            <h2>Samples</h2>
+            <ol>
+                <li><a href="{{baseURL}}/samples/get">{{baseURL}}/samples/get</a></li>
+                <li>POST</li>
+            </ol>
+        </section>
+ 
+    </main>
+    {{/if}}
+    <script lang="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/highlight.min.js"></script>
+    <script lang="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/languages/javascript.min.js"></script>
+    <script lang="text/javascript" src="https://cdn.rawgit.com/alexcorvi/anchorme.js/gh-pages/dist-browser/anchorme.js"></script>
+    <script lang="text/javascript" src="/static/js/index.js"></script>
+    
+</body>
+</html>

@@ -1,28 +1,10 @@
-/*
- * Note: In order for S3 to work, the following environment variables
- * must be set: http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-environment.html
- * AWS_ACCESS_KEY_ID
- * AWS_SECRET_ACCESS_KEY
- */
-
-
-/* TODO:
- * Custom collections have a username prefix, e.g.: vanwars_images
- * Create /endpoints/ listing w/list of all collections in DB.
- */
-var helpers = require("../lib/helpers");
 var mongodb = require("mongodb");
-var im = require('imagemagick');
 var ObjectID = mongodb.ObjectID;
 var thumbnailer = require("../lib/thumbnailer");
 var fileHandler = require("../lib/fileHandler");
 
 // SEE: http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-environment.html
-var S3_BUCKET = process.env.AWS_S3_BUCKET,
-    fs = require('fs'),
-    AWS = require('aws-sdk'),
-    fs = require('fs'),
-    flow = require('flow'),
+var flow = require('flow'),
     getCollection = function (params) {
         'use strict';
         return params.collection;
@@ -49,22 +31,19 @@ exports.list = function (req, res) {
 exports.post = function (req, res) {
     'use strict';
     var COLLECTION = getCollection(req.params),
-        //requiredFields = ['username'],
-        isValid,
         newImage = req.body;
     // ensure if someone accidentally posts an _id, that it doesn't
     // interfere w/MongoDB's indexing system. Delete _id from dictionary:
     delete req.body._id;
-    //req.body.username = req.body.username || req.params.username;
 
-    // isValid = helpers.validateCreateUpdate(requiredFields, req, res);
-    // if (!isValid) {
-    //     return;
-    // }
+    const hasValidS3Config = fileHandler.checkIfValidS3Config();
+
     flow.exec(
-        // generate thumbnails and transfer to S3:
+        // 1. Generate thumbnails and transfer them to S3
+        //    Only executes if S3 is configured correctly, otherwise
+        //    it ignores file posts:
         function () {
-            if (req.files && req.files.image) {
+            if (req.files && req.files.image && hasValidS3Config) {
                 thumbnailer.generateThumbnails({
                     req: req,
                     res: res,
@@ -75,9 +54,9 @@ exports.post = function (req, res) {
                 this();
             }
         },
-        // append thumbnail data to JSON object:
+        // 2. append thumbnails data to JSON object (if applicable):
         function (images) {
-            if (images) {
+            if (images && hasValidS3Config) {
                 newImage.image = {
                     items: images,
                     original_file_name: req.files.image.name
@@ -85,9 +64,9 @@ exports.post = function (req, res) {
             }
             this();
         },
-        // transfer audio to S3:
+        // 3. transfer audio to S3 (if applicable / if S3 configured):
         function () {
-            if (req.files && req.files.audio) {
+            if (req.files && req.files.audio && hasValidS3Config) {
                 fileHandler.transferFile({
                     req: req,
                     res: res,
@@ -97,16 +76,16 @@ exports.post = function (req, res) {
                 this();
             }
         },
-        // append audio data to JSON object:
+        // 4. append audio data to JSON object (if applicable):
         function (audioData) {
-            if (audioData) {
+            if (audioData && hasValidS3Config) {
                 newImage.audio = audioData;
             }
             this();
         },
-        // transfer file to S3:
+        // 5. transfer file to S3 (if applicable / if S3 configured):
         function () {
-            if (req.files && req.files.file) {
+            if (req.files && req.files.file && hasValidS3Config) {
                 fileHandler.transferFile({
                     req: req,
                     res: res,
@@ -116,14 +95,14 @@ exports.post = function (req, res) {
                 this();
             }
         },
-        // append file data data to JSON object:
+        // 6. append file data data to JSON object (if applicable):
         function (fileData) {
-            if (fileData) {
+            if (fileData && hasValidS3Config) {
                 newImage.file = fileData;
             }
             this();
         },
-        // finally, save to database:
+        // 7. finally, save to database (for attribute / non-binary data):
         function () {
             newImage.createDate = new Date();
             //finally, insert a new record:
