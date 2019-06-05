@@ -18,7 +18,7 @@ want your data to be treated as an image or as an audio file:
 # Setup Instructions
 ## Deploying to Heroku
 1. Set up an empty MongoDB using the **mLab MongoDB** Add-on (use Free "Sandbox" version).
-2. Create an environment variable called MONGODB_URI that points to your newly created database.
+2. Create an environment variable called MONGODB_URI that points to the newly created database that mLab has created for you.
 
 ## Environment variables
 In order for the app to work, you need to configure the following environment variables:
@@ -29,6 +29,8 @@ AWS_SECRET_ACCESS_KEY={{YOUR_AWS_SECRET_ACCESS_KEY}}
 AWS_S3_BUCKET={{YOUR_AWS_S3_BUCKET}}
 ```
 Only the MONGODB_URI is required. The AWS variables are only required if you wish to store images remotely.
+
+If you are working with the Heroku client tools locally, simply create an .env file at the root of your application and save all of your environment variables inside of the file.
 
 ## S3 File setup instructions (Optional)
 Note that support for images and audio files (e.g. blobs) requires that you set
