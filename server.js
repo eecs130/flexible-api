@@ -43,6 +43,7 @@ const getEndpoints = (mainreq, mainres, callback) => {
             for (let i = 0, p = Promise.resolve(); i < endpoints.length; i++) {
                 const endpoint = endpoints[i]['name'];
                 if (endpoint === 'system.indexes') {
+                    resolve();
                     continue;
                 }
                 p = p.then(_ => new Promise(resolve => {
