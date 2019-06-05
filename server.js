@@ -105,9 +105,6 @@ app.use('/static', express.static('views'))
 app.use('/samples', express.static(__dirname + "/samples"));
 app.use('/samples', serveIndex(__dirname + "/samples"));
 
-app.use('/samples-angular', express.static(__dirname + "/samples_angular"));
-app.use('/samples-angular', serveIndex(__dirname + "/samples_angular"));
-
 app.use('/tester', express.static(__dirname + "/tester"));
 app.use('/tester', serveIndex(__dirname + "/tester"));
 
