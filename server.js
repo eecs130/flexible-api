@@ -42,14 +42,12 @@ const getEndpoints = (mainreq, mainres, callback) => {
             baseURL = '//' + mainreq.get('host');
             for (let i = 0, p = Promise.resolve(); i < endpoints.length; i++) {
                 const endpoint = endpoints[i]['name'];
-                if (endpoint === 'system.indexes') {
-                    resolve();
-                    continue;
-                }
                 p = p.then(_ => new Promise(resolve => {
                     mainreq.db.collection().find(endpoint).toArray(function(err, items) {
                         if (err) throw err;
-                        endpointsFinal[endpoint] = items.map(item => item['_id']);
+                        if (endpoint !== 'system.indexes') {
+                            endpointsFinal[endpoint] = items.map(item => item['_id']);
+                        }
                         // if it's the last endpoint, render the response
                         // (needs to happen within a promise):
                         if (i === endpoints.length - 1) {
