@@ -1,5 +1,9 @@
-# Instructions
-This API has been created for learning purposes. Here are the rules:
+# How it works
+This API has been created for learning purposes. It is intended for prototyping endpoints. However unlike other prototyping tools (e.g. json-server-heroku), data will persist across sessions in a MongoDB database. There is also support for binary media if you choose to configure an S3 Bucket. Some caveats:
+* Not intended for production.
+* Does not currently support sorting, filtering, limit_by, etc (though it certainly could be extended to do so).
+* Does not currently support data validation / schemas (though it certainly could be extended to do so).
+* I have not written tests yet.
 
 ## Endpoints
 You may create as many endpoints as you wish. If the endpoint does not exist, it will be created when you POST data to it. Each endpoint will create a new MongoDB Collection (i.e. table).
