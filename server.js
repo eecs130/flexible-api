@@ -45,7 +45,9 @@ const getEndpoints = (mainreq, mainres, callback) => {
                     mainreq.db.collection(endpoints[i]['name']).find().toArray(function(err, items) {
                         if (err) throw err;
                         console.log(endpoints[i]['name']);
-                        endpointsFinal[endpoints[i]['name']] = items.map(item => item['_id']);
+                        if (endpoints[i]['name'] !== 'system.indexes') {
+                            endpointsFinal[endpoints[i]['name']] = items.map(item => item['_id']);
+                        }
                         // if it's the last endpoint, render the response
                         // (needs to happen within a promise):
                         if (i === endpoints.length - 1) {
