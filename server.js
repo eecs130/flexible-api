@@ -25,24 +25,7 @@ const addDBToRequest = (request, response, next) => {
     next();
 };
 
-const showListOfCollections = (mainreq, mainres) => {
-    mainreq.db.listCollections().toArray()
-        .then(collInfos => {
-            const endpoints = collInfos.map(item => { 
-                return { 'name': item.name };
-            });
-            endpoints.unshift({ 'name': 'endpoints' })
-            return endpoints;
-        })
-        .then(endpoints => {
-            mainres.render('index', { 
-                endpoints: endpoints,
-                baseURL: '//' + mainreq.get('host')
-            });
-        });
-};
-
-const getAllEndpoints = (mainreq, mainres) => {
+const getEndpoints = (mainreq, mainres, callback) => {
     const endpointsFinal = {};
     mainreq.db.listCollections().toArray()
         .then(collInfos => {
@@ -59,20 +42,13 @@ const getAllEndpoints = (mainreq, mainres) => {
             baseURL = '//' + mainreq.get('host');
             for (let i = 0, p = Promise.resolve(); i < endpoints.length; i++) {
                 p = p.then(_ => new Promise(resolve => {
-                    //endpointsFinal.push(endpoints[i]['url']);
-                    const ids = [];
                     mainreq.db.collection(endpoints[i]['name']).find().toArray(function(err, items) {
                         if (err) throw err;
-                        for (item of items) {
-                            // let url = baseURL + '/' + endpoints[i]['name'] + '/' + item['_id'] + '/';
-                            // endpointsFinal.push(url);
-                            ids.push(item['_id']);
-                        }
-                        endpointsFinal[endpoints[i]['name']] = ids;
+                        endpointsFinal[endpoints[i]['name']] = items.map(item => item['_id']);
                         // if it's the last endpoint, render the response
                         // (needs to happen within a promise):
                         if (i === endpoints.length - 1) {
-                            mainres.status(200).json(endpointsFinal);
+                            callback(endpointsFinal);
                         }
                         resolve();
                     })
@@ -134,8 +110,20 @@ app.use('/tester', serveIndex(__dirname + "/tester"));
 
 
 // Dynamic Routes:
-app.get('/', showListOfCollections);
-app.get('/endpoints/', getAllEndpoints);
+app.get('/', (mainreq, mainres) => {
+    getEndpoints(mainreq, mainres, (endpoints) => {
+        mainres.render('index', { 
+            endpoints: endpoints,
+            baseURL: '//' + mainreq.get('host')
+        });
+    })
+});
+
+app.get('/endpoints/', (mainreq, mainres) => {
+    getEndpoints(mainreq, mainres, (endpoints) => {
+        mainres.status(200).json(endpoints);
+    })
+});
 
 // Generic, user-defined tables w/S3 & thumbnailing support:
 var multipart = require('connect-multiparty'),
